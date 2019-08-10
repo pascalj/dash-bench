@@ -1,3 +1,5 @@
+#ifndef SORTBENCH_H__INCLUDED
+#define SORTBENCH_H__INCLUDED
 #include <mpi.h>
 #include <cassert>
 #include <iterator>
@@ -9,6 +11,7 @@
 
 #include <util/Logging.h>
 
+namespace sortbench {
 template <typename RandomIt, typename Gen>
 inline void parallel_rand(RandomIt begin, RandomIt end, Gen const g)
 {
@@ -16,23 +19,17 @@ inline void parallel_rand(RandomIt begin, RandomIt end, Gen const g)
 
   auto const n = static_cast<size_t>(std::distance(begin, end));
 
-  int ThisTask;
-  MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
-
-  std::seed_seq seed{std::random_device{}(), static_cast<unsigned>(ThisTask)};
-  std::mt19937  rng(seed);
-
   for (size_t idx = 0; idx < n; ++idx) {
-      auto it = begin + idx;
-      *it     = g(n, idx, rng);
+    auto it = begin + idx;
+    *it     = g(n, idx);
   }
 }
 
 template <typename Container, typename Cmp>
-inline void parallel_sort(Container & c, Cmp cmp)
+inline void parallel_sort(Container& c, Cmp cmp)
 {
   auto begin = c.begin();
-  auto end = c.end();
+  auto end   = c.end();
   assert(!(end < begin));
 
   using value_t = typename Container::value_type;
@@ -59,5 +56,9 @@ inline bool parallel_verify(RandomIt begin, RandomIt end, Cmp cmp)
     }
   }
 
+  MPI_Barrier(MPI_COMM_WORLD);
+
   return nerror == 0;
 }
+}  // namespace sortbench
+#endif
