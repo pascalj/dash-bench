@@ -1,0 +1,44 @@
+let proot = '/home/pascal/src/dash-bench/reduce-bench'
+
+let droot = '/home/pascal/src/dash'
+let mroot = '/home/pascal/src/mephisto/'
+
+let g:ale_linters = {'cpp': ['clang'], 'c': ['clang']}
+
+let g:ale_c_clang_options = '-std=c99 '
+
+let g:ale_c_clang_options .= '-I' . proot . '/include '
+let g:ale_c_clang_options .= '-I' . droot . '/dart-if/include '
+let g:ale_c_clang_options .= '-I' . droot . '/dart-impl/mpi/include '
+let g:ale_c_clang_options .= '-I' . droot . '/dart-impl/mpi/src '
+let g:ale_c_clang_options .= '-I' . droot . '/dart-impl/base/include '
+let g:ale_c_clang_options .= '-I' . droot . '/dart-impl/base/src '
+let g:ale_c_clang_options .= '-DUSE_DASH'
+
+let g:ale_cpp_clang_options = '-std=c++14 '
+ 
+let g:ale_cpp_clang_options .= '-I' . proot . '/include '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dash/include '
+let g:ale_cpp_clang_options .= '-I' . droot . '/patterns/include '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dash/src '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dash/test '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dart-if/include '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dart-impl/mpi/include '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dart-impl/mpi/src '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dart-impl/base/include '
+let g:ale_cpp_clang_options .= '-I' . droot . '/dart-impl/base/src '
+let g:ale_cpp_clang_options .= '-I' . droot . '/vendor/googletest/googletest/include/ '
+
+let g:ale_cpp_clang_options .= '-I' . mroot . '/mephisto/include '
+let g:ale_cpp_clang_options .= '-I' . mroot . '/alpaka/include '
+let g:ale_cpp_clang_options .= '-I/home/pascal/pkg/boost/1.67.0/include '
+
+let g:ale_cpp_clang_options .= '-DDASH_ENABLE_LOGGING '
+let g:ale_cpp_clang_options .= '-DDASH_ENABLE_TRACE_LOGGING '
+let g:ale_cpp_clang_options .= '-DDASH_ENABLE_ASSERTIONS '
+let g:ale_cpp_clang_options .= '-DDASH_ENABLE_TEST_LOGGING '
+let g:ale_cpp_clang_options .= '-DMPI_IMPL_ID="mpich" '
+let g:ale_cpp_clang_options .= '-DUSE_MEPHISTO  -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED '
+
+set path+=/home/pascal/src/dash/dash/include/
+set path+=/home/pascal/src/dash-bench/reduce-bench/include/
