@@ -12,7 +12,7 @@ MEPHISTOROOT=$(HOME)/src/mephisto/mephisto
 ALPAKAROOT=$(HOME)/src/mephisto/alpaka
 BOOST_ROOT?=$(HOME)/src/mephisto/alpaka
 
-CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG -std=c++14 -DENABLE_LOGGING
+CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG -std=c++14 -DENABLE_LOGGING -fopenmp
 
 DASHCXXFLAGS = $(CXXFLAGS)
 
@@ -47,7 +47,7 @@ build/dash.x: include/dash/reducebench.h reducebench.cc
 
 build/mephisto.x: include/mephisto/reducebench.h reducebench.cc
 	@mkdir -p build
-	$(DASHCXX) $(DASHCXXFLAGS) -I$(BOOST_ROOT)/include -I$(MEPHISTOROOT)/include -I$(ALPAKAROOT)/include -o $@ -DUSE_MEPHISTO -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED reducebench.cc
+	$(DASHCXX) $(DASHCXXFLAGS) -I$(BOOST_ROOT)/include -I$(MEPHISTOROOT)/include -I$(ALPAKAROOT)/include -o $@ -DUSE_MEPHISTO -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -DALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED -DALPAKA_ACC_CPU_B_SEQ_T_OMP2_ENABLED reducebench.cc
 
 build/mpi.x: include/mpi/reducebench.h reducebench.cc
 	@mkdir -p build

@@ -55,7 +55,7 @@ inline auto transform_reduce(
   // Context consists of the host, the accelerator and the stream
   using Queue   = alpaka::queue::QueueCpuSync;
   using EntityT =
-      mephisto::Entity<1, std::size_t, alpaka::acc::AccCpuSerial>;
+      mephisto::Entity<1, std::size_t, alpaka::acc::AccCpuOmp2Threads>;
   using Context = mephisto::execution::AlpakaExecutionContext<EntityT, Queue>;
   Context ctx;
 
