@@ -38,7 +38,7 @@ let g:ale_cpp_clang_options .= '-DDASH_ENABLE_TRACE_LOGGING '
 let g:ale_cpp_clang_options .= '-DDASH_ENABLE_ASSERTIONS '
 let g:ale_cpp_clang_options .= '-DDASH_ENABLE_TEST_LOGGING '
 let g:ale_cpp_clang_options .= '-DMPI_IMPL_ID="mpich" '
-let g:ale_cpp_clang_options .= '-DUSE_MEPHISTO  -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED '
+let g:ale_cpp_clang_options .= '-DUSE_MEPHISTO  -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -DALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED '
 
 set path+=/home/pascal/src/dash/dash/include/
 set path+=/home/pascal/src/dash-bench/reduce-bench/include/

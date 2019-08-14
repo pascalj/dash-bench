@@ -213,7 +213,6 @@ int main(int argc, char* argv[])
 
 #if defined(USE_DASH) || defined(USE_MEPHISTO)
   dash::init(&argc, &argv);
-
   auto const P           = dash::size();
   auto const gsize_bytes = mysize * P;
   auto const N           = nl * P;
@@ -231,6 +230,7 @@ int main(int argc, char* argv[])
       T ? T : std::thread::hardware_concurrency();
   assert(P > 0);
   auto const gsize_bytes = mysize;
+
   auto const N           = nl;
   auto const r    = 0;
 #endif
@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
       executable.substr(executable.find_last_of("/\\") + 1);
 
 #if defined(USE_MEPHISTO)
-  using EntityT = mephisto::Entity<1, std::size_t, alpaka::acc::AccCpuSerial>;
+  using EntityT = mephisto::Entity<1, std::size_t, alpaka::acc::AccCpuThreads>;
   using BasePattern = dash::BlockPattern<1>;
   using PatternT    = patterns::BalancedLocalPattern<BasePattern, EntityT>;
 
