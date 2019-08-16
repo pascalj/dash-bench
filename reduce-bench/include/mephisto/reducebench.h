@@ -11,6 +11,18 @@
 
 #include <util/Logging.h>
 
+template<typename T, typename V>
+#ifdef ALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED
+using reduce_acc_t = alpaka::acc::AccCpuSerial<T, V>;
+#elif defined(ALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED)
+using reduce_acc_t = alpaka::acc::AccCpuThreads<T, V>;
+#elif defined(ALPAKA_ACC_CPU_B_SEQ_T_OMP2_ENABLED)
+using reduce_acc_t = alpaka::acc::AccCpuOmp2Threads<T, V>;
+#else
+#error Please specify an accelerator via ALPAKA_ACC_*
+#endif
+
+
 template <typename RandomIt, typename Gen>
 inline void parallel_rand(RandomIt begin, RandomIt end, Gen const g)
 {
@@ -55,7 +67,7 @@ inline auto transform_reduce(
   // Context consists of the host, the accelerator and the stream
   using Queue   = alpaka::queue::QueueCpuSync;
   using EntityT =
-      mephisto::Entity<1, std::size_t, alpaka::acc::AccCpuOmp2Threads>;
+      mephisto::Entity<1, std::size_t, reduce_acc_t>;
   using Context = mephisto::execution::AlpakaExecutionContext<EntityT, Queue>;
   Context ctx;
 

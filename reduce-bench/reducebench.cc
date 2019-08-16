@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
       executable.substr(executable.find_last_of("/\\") + 1);
 
 #if defined(USE_MEPHISTO)
-  using EntityT = mephisto::Entity<1, std::size_t, alpaka::acc::AccCpuOmp2Threads>;
+  using EntityT = mephisto::Entity<1, std::size_t, reduce_acc_t>;
   using BasePattern = dash::BlockPattern<1>;
   using PatternT    = patterns::BalancedLocalPattern<BasePattern, EntityT>;
 
