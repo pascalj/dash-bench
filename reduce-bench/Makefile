@@ -14,7 +14,7 @@ BOOST_ROOT?=$(HOME)/src/mephisto/alpaka
 
 OMPFLAG?=-fopenmp
 
-CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG -std=c++14 -DENABLE_LOGGING
+CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG -std=c++14
 
 DASHCXXFLAGS = $(CXXFLAGS)
 MEPHISTOCXXFLAGS = $(DASHCXXFLAGS) -I$(BOOST_ROOT)/include -I$(MEPHISTOROOT)/include -I$(ALPAKAROOT)/include -DUSE_MEPHISTO

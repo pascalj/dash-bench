@@ -213,7 +213,6 @@ int main(int argc, char* argv[])
 
 #if defined(USE_DASH) || defined(USE_MEPHISTO)
   dash::init(&argc, &argv);
-
   auto const P           = dash::size();
   auto const gsize_bytes = mysize * P;
   auto const N           = nl * P;
@@ -231,6 +230,7 @@ int main(int argc, char* argv[])
       T ? T : std::thread::hardware_concurrency();
   assert(P > 0);
   auto const gsize_bytes = mysize;
+
   auto const N           = nl;
   auto const r    = 0;
 #endif
