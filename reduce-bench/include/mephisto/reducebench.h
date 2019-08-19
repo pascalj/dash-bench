@@ -1,4 +1,5 @@
 #include <cassert>
+
 #include <numeric>
 #include <random>
 
@@ -18,6 +19,8 @@ using reduce_acc_t = alpaka::acc::AccCpuSerial<T, V>;
 using reduce_acc_t = alpaka::acc::AccCpuThreads<T, V>;
 #elif defined(ALPAKA_ACC_CPU_B_SEQ_T_OMP2_ENABLED)
 using reduce_acc_t = alpaka::acc::AccCpuOmp2Threads<T, V>;
+#elif defined(ALPAKA_ACC_GPU_CUDA_ENABLED)
+using reduce_acc_t = alpaka::acc::AccGpuCudaRt<T, V>;
 #else
 #error Please specify an accelerator via ALPAKA_ACC_*
 #endif
@@ -65,7 +68,11 @@ inline auto transform_reduce(
   assert(!(end < begin));
 
   // Context consists of the host, the accelerator and the stream
+#ifdef ALPAKA_ACC_GPU_CUDA_ENABLED
+  using Queue   = alpaka::queue::QueueCudaRtSync;
+#else
   using Queue   = alpaka::queue::QueueCpuSync;
+#endif
   using EntityT =
       mephisto::Entity<1, std::size_t, reduce_acc_t>;
   using Context = mephisto::execution::AlpakaExecutionContext<EntityT, Queue>;
@@ -106,7 +113,6 @@ inline auto verify_transform_reduce(
   auto* lbegin = dash::local_begin(
       static_cast<pointer>(begin), begin.pattern().team().myid());
   auto*      lend = std::next(lbegin, l_range.end);
-  auto const nl   = l_range.end - l_range.begin;
 
   std::transform(lbegin, lend, lbegin, unary_op);
   auto const local_result = std::accumulate(lbegin, lend, init, binary_op);
