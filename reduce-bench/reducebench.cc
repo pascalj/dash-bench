@@ -34,6 +34,15 @@
 #define GB (1 << 30)
 #define MB (1 << 20)
 
+#ifndef FN_HOST
+#define FN_HOST
+#endif
+
+#ifndef FN_HOST_ACC
+#define FN_HOST_ACC
+#endif
+
+
 template <typename RandomIt>
 void trace_histo(RandomIt begin, RandomIt end)
 {
@@ -135,11 +144,11 @@ void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
     value_t init{0};
 
     auto const start = ChronoClockNow();
-    auto binary_op = [] __host__ __device__ (value_t lhs, value_t rhs) {
+    auto binary_op = [] FN_HOST_ACC (value_t lhs, value_t rhs) {
       return lhs + rhs;
     };
 
-    auto unary_op = [] __host__ __device__ (value_t val) {
+    auto unary_op = [] FN_HOST_ACC (value_t val) {
       return val * 10;
     };
 
