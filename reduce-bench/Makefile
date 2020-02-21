@@ -5,12 +5,13 @@ SHELL=/bin/bash
 # parameter
 MPICXX?=mpic++
 
-DASHROOT?=$(HOME)/opt/dash-0.3.0-dev
+DASHROOT?=$(HOME)/opt/dash-0.4.0
 DASHCXX=$(DASHROOT)/bin/dash-mpic++
 DASHNVCC=$(DASHROOT)/bin/dash-nvcc
 MEPHISTOROOT=$(HOME)/src/mephisto/mephisto
 ALPAKAROOT=$(HOME)/src/mephisto/alpaka
-BOOST_ROOT?=$(HOME)/src/mephisto/alpaka
+BOOSTROOT=$(BOOST_ROOT)
+# BOOST_ROOT?=$(BOOST_ROOT)
 
 OMPFLAG?=-fopenmp
 
@@ -18,7 +19,7 @@ CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG
 
 DASHCXXFLAGS = $(CXXFLAGS)
 NVCC_DIAG_SUPPRESS="-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored -Xcudafe --diag_suppress=code_is_unreachable -Xcudafe --diag_suppress=set_but_not_used -Xcudafe --diag_suppress=initialization_not_reachable -Xcudafe --diag_suppress=expr_has_no_effect"
-MEPHISTOCXXFLAGS = $(DASHCXXFLAGS) -I$(BOOST_ROOT)/include -I$(MEPHISTOROOT)/include -I$(ALPAKAROOT)/include -DUSE_MEPHISTO
+MEPHISTOCXXFLAGS = $(DASHCXXFLAGS) -I$(BOOSTROOT)/include -I$(ALPAKAROOT)/include -DUSE_MEPHISTO -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -DALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED
 
 SIZE ?= $$((500 * (2**20)))
 

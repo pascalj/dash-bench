@@ -15,13 +15,13 @@
 #include <tbb/task_scheduler_init.h>
 #endif
 
+#include <dash/util/BenchmarkParams.h>
 #include <dash/reducebench.h>
 #include <omp.h>
 #include <libdash.h>
 #elif defined(USE_MPI)
 #include <mpi/reducebench.h>
 #elif defined(USE_MEPHISTO)
-#include <mephisto/entity>
 #include <patterns/local_pattern.h>
 #include <alpaka/alpaka.hpp>
 #include <mephisto/reducebench.h>
@@ -159,8 +159,9 @@ void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
     auto const ret = verify_transform_reduce(
         c.begin(), c.end(), result, init, binary_op, unary_op);
 
-    if (!ret) {
-      std::cerr << "validation failed! (n = " << N << ")\n";
+    if (ret != result) {
+      std::cerr << "validation failed! (n = " << N << "): " << ret
+                << " != " << result << std::endl;
     }
 
     if (iter >= BURN_IN && r == 0) {
@@ -261,7 +262,7 @@ int main(int argc, char* argv[])
       executable.substr(executable.find_last_of("/\\") + 1);
 
 #if defined(USE_MEPHISTO)
-  using EntityT = mephisto::Entity<1, std::size_t, reduce_acc_t>;
+  using EntityT = dash::CpuThreadEntity<1>;
   using BasePattern = dash::BlockPattern<1>;
   using PatternT    = patterns::BalancedLocalPattern<BasePattern, EntityT>;
 
@@ -277,12 +278,12 @@ int main(int argc, char* argv[])
 
   if (r == 0) {
 #if defined(USE_DASH) || defined(USE_MEPHISTO)
-    dash::util::BenchmarkParams bench_params("bench.mephisto.reduce");
-    bench_params.set_output_width(72);
-    bench_params.print_header();
-    if (dash::size() < 200) {
-      bench_params.print_pinning();
-    }
+//    dash::util::BenchmarkParams bench_params("bench.mephisto.reduce");
+    /* bench_params.set_output_width(72); */
+    /* bench_params.print_header(); */
+    /* if (dash::size() < 200) { */
+    /*   bench_params.print_pinning(); */
+    /* } */
 #endif
     print_header(base_filename, mb, P);
   }

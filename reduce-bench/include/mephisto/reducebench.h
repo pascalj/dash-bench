@@ -8,7 +8,8 @@
 #include <dash/algorithm/LocalRange.h>
 #include <dash/algorithm/Transform.h>
 
-#include <mephisto/execution>
+#include <patterns/local_pattern.h>
+#include <dash/mephisto/Entities.h>
 
 #include <util/Logging.h>
 
@@ -71,20 +72,14 @@ inline auto transform_reduce(
 #ifdef ALPAKA_ACC_GPU_CUDA_ENABLED
   using Queue   = alpaka::queue::QueueCudaRtSync;
 #else
-  using Queue   = alpaka::queue::QueueCpuSync;
+  using Queue   = alpaka::queue::QueueCpuBlocking;
 #endif
   using EntityT =
-      mephisto::Entity<1, std::size_t, reduce_acc_t>;
-  using Context = mephisto::execution::AlpakaExecutionContext<EntityT, Queue>;
-  Context ctx;
+      dash::CpuThreadEntity<1>;
 
-  // The executor is the one actually doing the computation
-  mephisto::execution::AlpakaExecutor<Context> executor{&ctx};
+  dash::AlpakaExecutor<EntityT> executor;
 
-  // The policy is used to relax guarantees.
-  auto policy = mephisto::execution::make_parallel_policy(executor);
-
-  return dash::transform_reduce(policy, begin, end, init, binary_op, unary_op);
+  return dash::transform_reduce(executor, begin, end, init, binary_op, unary_op);
 }
 
 template <
