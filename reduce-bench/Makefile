@@ -19,7 +19,7 @@ CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG
 
 DASHCXXFLAGS = $(CXXFLAGS)
 NVCC_DIAG_SUPPRESS="-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored -Xcudafe --diag_suppress=code_is_unreachable -Xcudafe --diag_suppress=set_but_not_used -Xcudafe --diag_suppress=initialization_not_reachable -Xcudafe --diag_suppress=expr_has_no_effect"
-MEPHISTOCXXFLAGS = $(DASHCXXFLAGS) -I$(BOOSTROOT)/include -I$(ALPAKAROOT)/include -DUSE_MEPHISTO -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -DALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED
+MEPHISTOCXXFLAGS = $(DASHCXXFLAGS) -I$(DASHROOT)/include -I$(BOOSTROOT)/include -I$(ALPAKAROOT)/include -DUSE_MEPHISTO
 
 SIZE ?= $$((500 * (2**20)))
 
@@ -68,7 +68,7 @@ build/mephisto.omp.x: include/mephisto/reducebench.h reducebench.cc
 
 build/mephisto.nv: include/mephisto/reducebench.h reducebench.cu
 	@mkdir -p build
-	$(DASHNVCC) $(MEPHISTOCXXFLAGS) $(NVCC_DIAG_SUPPRESS) --expt-extended-lambda --expt-relaxed-constexpr -o $@ -DALPAKA_ACC_GPU_CUDA_ENABLED reducebench.cu
+	$(DASHNVCC) $(MEPHISTOCXXFLAGS) $(NVCC_DIAG_SUPPRESS) --expt-extended-lambda --expt-relaxed-constexpr -o $@ -DALPAKA_ACC_GPU_CUDA_ENABLED reducebench.cu -G
 
 build/mpi.x: include/mpi/reducebench.h reducebench.cc
 	@mkdir -p build

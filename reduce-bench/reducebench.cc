@@ -22,6 +22,8 @@
 #elif defined(USE_MPI)
 #include <mpi/reducebench.h>
 #elif defined(USE_MEPHISTO)
+#include <dash/util/BenchmarkParams.h>
+#include <libdash.h>
 #include <patterns/local_pattern.h>
 #include <alpaka/alpaka.hpp>
 #include <mephisto/reducebench.h>
@@ -128,11 +130,7 @@ void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
   for (size_t iter = 0; iter < NITER + BURN_IN; ++iter) {
     parallel_rand(
         c.begin(), c.end(), [](size_t total, size_t index, std::mt19937& rng) {
-          // return index;
-          // return total - index;
-          return dist(rng) * 1E6;
-          // return static_cast<key_t>(std::round(dist(rng) * SIZE_FACTOR));
-          // return std::rand();
+          return index;
         });
 
 #ifdef USE_DASH
@@ -140,28 +138,27 @@ void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
     dash::util::TraceStore::clear();
 #endif
 
-    using value_t = int;
+    using value_t = uint64_t;
     value_t init{0};
 
-    auto const start = ChronoClockNow();
     auto binary_op = [] FN_HOST_ACC (value_t lhs, value_t rhs) {
       return lhs + rhs;
     };
 
     auto unary_op = [] FN_HOST_ACC (value_t val) {
-      return val * 10;
+      return val + 1;
     };
 
-    auto const result = transform_reduce(c, init, binary_op, unary_op);
-
+    auto const start    = ChronoClockNow();
+    auto const result   = transform_reduce(c, init, binary_op, unary_op);
     auto const duration = ChronoClockNow() - start;
 
     auto const ret = verify_transform_reduce(
         c.begin(), c.end(), result, init, binary_op, unary_op);
 
-    if (ret != result) {
-      std::cerr << "validation failed! (n = " << N << "): " << ret
-                << " != " << result << std::endl;
+    if (ret == 0) {
+      std::cerr << "validation failed! (n = " << N << "): " << result
+                << std::endl;
     }
 
     if (iter >= BURN_IN && r == 0) {
@@ -201,7 +198,7 @@ void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
 
 int main(int argc, char* argv[])
 {
-  using key_t = double;
+  using key_t = uint64_t;
 
   if (argc < 2) {
     std::cout << std::string(argv[0])
@@ -262,9 +259,8 @@ int main(int argc, char* argv[])
       executable.substr(executable.find_last_of("/\\") + 1);
 
 #if defined(USE_MEPHISTO)
-  using EntityT = dash::CpuThreadEntity<1>;
   using BasePattern = dash::BlockPattern<1>;
-  using PatternT    = patterns::BalancedLocalPattern<BasePattern, EntityT>;
+  using PatternT    = patterns::BalancedLocalPattern<BasePattern, entity_t<1>>;
 
   BasePattern base{N};
   PatternT pattern{base};
@@ -277,13 +273,13 @@ int main(int argc, char* argv[])
 #endif
 
   if (r == 0) {
-#if defined(USE_DASH) || defined(USE_MEPHISTO)
-//    dash::util::BenchmarkParams bench_params("bench.mephisto.reduce");
-    /* bench_params.set_output_width(72); */
-    /* bench_params.print_header(); */
-    /* if (dash::size() < 200) { */
-    /*   bench_params.print_pinning(); */
-    /* } */
+#if defined(USE_DASH) || defined(USEMEPHISTO)
+    dash::util::BenchmarkParams bench_params("bench.mephisto.reduce");
+    bench_params.set_output_width(72);
+    bench_params.print_header();
+    if (dash::size() < 200) {
+      bench_params.print_pinning();
+    }
 #endif
     print_header(base_filename, mb, P);
   }

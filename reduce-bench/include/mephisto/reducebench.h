@@ -13,15 +13,15 @@
 
 #include <util/Logging.h>
 
-template<typename T, typename V>
+template<std::size_t Dim>
 #ifdef ALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED
-using reduce_acc_t = alpaka::acc::AccCpuSerial<T, V>;
+using entity_t = dash::CpuSerialEntity<Dim>;
 #elif defined(ALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED)
-using reduce_acc_t = alpaka::acc::AccCpuThreads<T, V>;
+using entity_t = dash::CpuThreadEntity<Dim>;
 #elif defined(ALPAKA_ACC_CPU_B_SEQ_T_OMP2_ENABLED)
-using reduce_acc_t = alpaka::acc::AccCpuOmp2Threads<T, V>;
+using entity_t = dash::CpuOmp2Entity<Dim>;
 #elif defined(ALPAKA_ACC_GPU_CUDA_ENABLED)
-using reduce_acc_t = alpaka::acc::AccGpuCudaRt<T, V>;
+using entity_t = dash::CudaEntity<Dim>;
 #else
 #error Please specify an accelerator via ALPAKA_ACC_*
 #endif
@@ -68,16 +68,7 @@ inline auto transform_reduce(
   auto end   = c.end();
   assert(!(end < begin));
 
-  // Context consists of the host, the accelerator and the stream
-#ifdef ALPAKA_ACC_GPU_CUDA_ENABLED
-  using Queue   = alpaka::queue::QueueCudaRtSync;
-#else
-  using Queue   = alpaka::queue::QueueCpuBlocking;
-#endif
-  using EntityT =
-      dash::CpuThreadEntity<1>;
-
-  dash::AlpakaExecutor<EntityT> executor;
+  dash::AlpakaExecutor<entity_t<Container::ndim()>> executor;
 
   return dash::transform_reduce(executor, begin, end, init, binary_op, unary_op);
 }
@@ -109,7 +100,7 @@ inline auto verify_transform_reduce(
       static_cast<pointer>(begin), begin.pattern().team().myid());
   auto*      lend = std::next(lbegin, l_range.end);
 
-  std::transform(lbegin, lend, lbegin, unary_op);
+//  std::transform(lbegin, lend, lbegin, unary_op);
   auto const local_result = std::accumulate(lbegin, lend, init, binary_op);
 
   auto const myid    = begin.pattern().team().myid();
@@ -124,5 +115,10 @@ inline auto verify_transform_reduce(
   }
 
   begin.pattern().team().barrier();
+
+  if(global_result != to_verify) {
+    printf("result: %ld, correct: %ld\n", to_verify, global_result);
+  }
+
   return global_result == to_verify;
 }
