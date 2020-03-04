@@ -20,6 +20,8 @@ using entity_t = dash::CpuSerialEntity<Dim>;
 using entity_t = dash::CpuThreadEntity<Dim>;
 #elif defined(ALPAKA_ACC_CPU_B_SEQ_T_OMP2_ENABLED)
 using entity_t = dash::CpuOmp2Entity<Dim>;
+#elif defined(ALPAKA_ACC_CPU_BT_OMP4_ENABLED)
+using entity_t = dash::CpuOmp4Entity<Dim>;
 #elif defined(ALPAKA_ACC_GPU_CUDA_ENABLED)
 using entity_t = dash::CudaEntity<Dim>;
 #else

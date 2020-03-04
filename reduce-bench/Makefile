@@ -5,7 +5,7 @@ SHELL=/bin/bash
 # parameter
 MPICXX?=mpic++
 
-DASHROOT?=$(HOME)/opt/dash-0.4.0
+DASHROOT?=$(HOME)/opt/dash-0.3.0-dev
 DASHCXX=$(DASHROOT)/bin/dash-mpic++
 DASHNVCC=$(DASHROOT)/bin/dash-nvcc
 MEPHISTOROOT=$(HOME)/src/mephisto/mephisto
@@ -15,7 +15,8 @@ BOOSTROOT=$(BOOST_ROOT)
 
 OMPFLAG?=-fopenmp
 
-CXXFLAGS+= -O3 -Iinclude -Iexternal -DNDEBUG
+# CXXFLAGS+= -O3 -Iinclude -Iexternal
+CXXFLAGS+= -O0 -g -Iinclude -Iexternal
 
 DASHCXXFLAGS = $(CXXFLAGS)
 NVCC_DIAG_SUPPRESS="-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored -Xcudafe --diag_suppress=code_is_unreachable -Xcudafe --diag_suppress=set_but_not_used -Xcudafe --diag_suppress=initialization_not_reachable -Xcudafe --diag_suppress=expr_has_no_effect"
@@ -65,6 +66,10 @@ build/mephisto.threads.x: include/mephisto/reducebench.h reducebench.cc
 build/mephisto.omp.x: include/mephisto/reducebench.h reducebench.cc
 	@mkdir -p build
 	$(DASHCXX) $(MEPHISTOCXXFLAGS) $(OMPFLAG) -o $@ -DALPAKA_ACC_CPU_B_SEQ_T_OMP2_ENABLED reducebench.cc
+
+build/mephisto.omp4.x: include/mephisto/reducebench.h reducebench.cc
+	@mkdir -p build
+	$(DASHCXX) $(MEPHISTOCXXFLAGS) $(OMPFLAG) -o $@ -DALPAKA_ACC_CPU_BT_OMP4_ENABLED reducebench.cc
 
 build/mephisto.nv: include/mephisto/reducebench.h reducebench.cu
 	@mkdir -p build
