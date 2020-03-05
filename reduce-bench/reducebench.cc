@@ -259,10 +259,12 @@ int main(int argc, char* argv[])
       executable.substr(executable.find_last_of("/\\") + 1);
 
 #if defined(USE_MEPHISTO)
-  using BasePattern = dash::BlockPattern<1>;
+  /* using BasePattern = dash::BlockPattern<1>; */
+  using BasePattern = dash::TilePattern<1>;
   using PatternT    = patterns::BalancedLocalPattern<BasePattern, entity_t<1>>;
 
-  BasePattern base{N};
+  dash::DistributionSpec<1> distspec(dash::TILE(N / 2 / dash::size()));
+  BasePattern base{N, distspec};
   PatternT pattern{base};
 
   dash::Array<key_t, dash::default_index_t, PatternT> keys(pattern);
