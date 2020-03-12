@@ -50,7 +50,6 @@ inline auto transform_reduce(
 
   auto * ptr = std::addressof(*begin);
 
-  std::transform(begin, end, begin, unary_op);
   result_t local_result = std::accumulate(begin, end, init, binary_op);
   result_t global_result;
 

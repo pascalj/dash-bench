@@ -80,6 +80,7 @@ void print_header(std::string const& app, double mb, int P)
   // Print the header
   std::cout << std::setw(4) << "#,";
   std::cout << std::setw(10) << "NTasks,";
+  std::cout << std::setw(10) << "ThreadsPerTask,";
   std::cout << std::setw(10) << "Size (MB),";
   std::cout << std::setw(20) << "Time,";
   std::cout << std::setw(20) << "Test Case";
@@ -88,10 +89,8 @@ void print_header(std::string const& app, double mb, int P)
 
 //! Test sort for n items
 template <class Container>
-void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
+void Test(Container & c, size_t N, int r, size_t P, size_t threads, std::string const& test_case)
 {
-  LOG("N :" << N);
-
   using key_t = typename Container::value_type;
 
   auto const mb = N * sizeof(key_t) / MB;
@@ -167,6 +166,7 @@ void Test(Container & c, size_t N, int r, size_t P,std::string const& test_case)
       os << std::setw(3) << iter << ",";
       // Ntasks
       os << std::setw(9) << P << ",";
+      os << std::setw(9) << threads << ",";
       // Size
       os << std::setw(9) << std::fixed << std::setprecision(2) << mb;
       os << ",";
@@ -242,6 +242,16 @@ int main(int argc, char* argv[])
   auto const r    = 0;
 #endif
 
+  size_t threads = 1;
+  auto thread_var = std::getenv("THREADS");
+  if(thread_var != NULL) {
+  	threads = std::atoi(thread_var);
+  }
+#if defined(_OPENMP)
+  omp_set_num_threads(threads);
+#endif
+
+
 #if defined(USE_TBB_HIGHLEVEL) || defined(USE_TBB_LOWLEVEL)
   tbb::task_scheduler_init init{static_cast<int>(P)};
 #elif defined(USE_DASH) && defined(DASH_ENABLE_PSTL)
@@ -275,7 +285,7 @@ int main(int argc, char* argv[])
 #endif
 
   if (r == 0) {
-#if defined(USE_DASH) || defined(USEMEPHISTO)
+#if defined(USE_DASH) || defined(USE_MEPHISTO)
     dash::util::BenchmarkParams bench_params("bench.mephisto.reduce");
     bench_params.set_output_width(72);
     bench_params.print_header();
@@ -286,7 +296,7 @@ int main(int argc, char* argv[])
     print_header(base_filename, mb, P);
   }
 
-  Test(keys, N, r, P, base_filename);
+  Test(keys, N, r, P, threads, base_filename);
 
 #if defined(USE_DASH) || defined(USE_MEPHISTO)
   dash::finalize();
