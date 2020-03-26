@@ -102,7 +102,7 @@ inline auto verify_transform_reduce(
       static_cast<pointer>(begin), begin.pattern().team().myid());
   auto*      lend = std::next(lbegin, l_range.end);
 
-//  std::transform(lbegin, lend, lbegin, unary_op);
+  std::transform(lbegin, lend, lbegin, unary_op);
   auto const local_result = std::accumulate(lbegin, lend, init, binary_op);
 
   auto const myid    = begin.pattern().team().myid();

@@ -145,7 +145,8 @@ void Test(Container & c, size_t N, int r, size_t P, size_t threads, std::string 
     };
 
     auto unary_op = [] FN_HOST_ACC (value_t val) {
-      return val + 1;
+      // some light computing, so this is not a memory benchmark
+      return val / (1 + val * val);
     };
 
     auto const start    = ChronoClockNow();
