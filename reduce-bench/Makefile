@@ -5,7 +5,7 @@ SHELL=/bin/bash
 # parameter
 MPICXX?=mpic++
 
-DASHROOT?=$(HOME)/opt/dash-0.3.0-dev
+DASHROOT?=$(HOME)/opt/dash-0.4.0
 DASHCXX=$(DASHROOT)/bin/dash-mpic++
 DASHNVCC=$(DASHROOT)/bin/dash-nvcc
 MEPHISTOROOT=$(HOME)/src/mephisto/mephisto
@@ -15,8 +15,8 @@ BOOSTROOT=$(BOOST_ROOT)
 
 OMPFLAG?=-fopenmp
 
-# CXXFLAGS+= -O3 -Iinclude -Iexternal
-CXXFLAGS+= -O0 -g -Iinclude -Iexternal
+CXXFLAGS+= -O3 -Iinclude -Iexternal
+# CXXFLAGS+= -O0 -g -Iinclude -Iexternal
 
 DASHCXXFLAGS = $(CXXFLAGS)
 NVCC_DIAG_SUPPRESS="-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored -Xcudafe --diag_suppress=code_is_unreachable -Xcudafe --diag_suppress=set_but_not_used -Xcudafe --diag_suppress=initialization_not_reachable -Xcudafe --diag_suppress=expr_has_no_effect"
