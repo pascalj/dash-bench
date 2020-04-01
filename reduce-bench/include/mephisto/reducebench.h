@@ -4,6 +4,7 @@
 #include <random>
 
 #include <dash/Array.h>
+#include <dash/memory/HostSpace.h>
 #include <dash/algorithm/Generate.h>
 #include <dash/algorithm/LocalRange.h>
 #include <dash/algorithm/Transform.h>
@@ -23,11 +24,17 @@ using entity_t = dash::CpuOmp2Entity<Dim>;
 #elif defined(ALPAKA_ACC_CPU_BT_OMP4_ENABLED)
 using entity_t = dash::CpuOmp4Entity<Dim>;
 #elif defined(ALPAKA_ACC_GPU_CUDA_ENABLED)
+#include <dash/memory/CudaSpace.h>
 using entity_t = dash::CudaEntity<Dim>;
 #else
 #error Please specify an accelerator via ALPAKA_ACC_*
 #endif
 
+#if defined(ALPAKA_ACC_GPU_CUDA_ENABLED)
+using memory_t    = dash::CudaSpace;
+#else
+using memory_t    = dash::HostSpace;
+#endif
 
 template <typename RandomIt, typename Gen>
 inline void parallel_rand(RandomIt begin, RandomIt end, Gen const g)

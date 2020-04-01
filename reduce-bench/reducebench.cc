@@ -146,7 +146,7 @@ void Test(Container & c, size_t N, int r, size_t P, size_t threads, std::string 
 
     auto unary_op = [] FN_HOST_ACC (value_t val) {
       // some light computing, so this is not a memory benchmark
-      return val / (1 + val * val);
+      return val % (1 + val * val);
     };
 
     auto const start    = ChronoClockNow();
@@ -278,7 +278,7 @@ int main(int argc, char* argv[])
   BasePattern base{N, distspec};
   PatternT pattern{base};
 
-  dash::Array<key_t, dash::default_index_t, PatternT> keys(pattern);
+  dash::Array<key_t, dash::default_index_t, PatternT, memory_t> keys(pattern);
 #elif defined(USE_DASH)
   dash::Array<key_t> keys(N);
 #else
