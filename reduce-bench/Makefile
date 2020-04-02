@@ -73,11 +73,15 @@ build/mephisto.omp4.x: include/mephisto/reducebench.h reducebench.cc
 
 build/mephisto.nv: include/mephisto/reducebench.h reducebench.cu
 	@mkdir -p build
-	$(DASHNVCC) $(MEPHISTOCXXFLAGS) $(NVCC_DIAG_SUPPRESS) --expt-extended-lambda --expt-relaxed-constexpr -o $@ -DALPAKA_ACC_GPU_CUDA_ENABLED reducebench.cu -G
+	$(DASHNVCC) $(MEPHISTOCXXFLAGS) $(NVCC_DIAG_SUPPRESS) --expt-extended-lambda --expt-relaxed-constexpr -o $@ -DALPAKA_ACC_GPU_CUDA_ENABLED reducebench.cu
 
 build/mpi.x: include/mpi/reducebench.h reducebench.cc
 	@mkdir -p build
 	$(MPICXX) $(CXXFLAGS) -Iexternal -o $@ -DUSE_MPI reducebench.cc
+
+build/thrust.nv: thrust.cu
+	@mkdir -p build
+	nvcc -O3 -o $@ --extended-lambda thrust.cu
 
 clean:
 	rm -f build/*.x
